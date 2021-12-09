@@ -1,0 +1,54 @@
+version: '3.1'
+
+services:
+
+  mysql-appbank:
+    image: mysql:8.0.27
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: appbank
+      MYSQL_USER: melissa
+      MYSQL_PASSWORD: changeme
+      MYSQL_ROOT_PASSWORD: superchangeme
+    volumes:
+      - mysql-appbank_data:/var/lib/mysql
+    ports:
+      - 3306:3306/tcp
+  
+  mysql:
+    image: mysql:5.7.36
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: keycloak
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root_keycloak
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  keycloack:
+    image: jboss/keycloak:15.0.2
+    container_name: keycloak
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      DB_VENDOR: mysql
+      DB_ADDR: mysql
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      JDBC_PARAMS: useSSL=false
+      KEYCLOAK_DEFAULT_THEME: my-theme
+    ports:
+      - 8000:8080
+
+  adminer :
+    image: adminer
+    restart: always
+    ports:
+      - 9000:8080
+
+volumes:
+
+  mysql-appbank_data: {}
+  mysql_data: {}
